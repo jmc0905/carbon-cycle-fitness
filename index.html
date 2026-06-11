@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<!-- 新增SEO优化 -->
+<meta name="description" content="碳循环健身全管理系统 - 打卡、饮食、训练、成本统计一体化工具">
+<meta name="keywords" content="碳循环,健身打卡,饮食管理,健身统计">
+<title>碳循环健身全管理系统 | 打卡+饮食+数据统计</title>
+<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #ff4d8a;
+  --primary2: #ff7d4a;
+  --radius: 22px;
+  --radius-lg: 28px;
+  --shadow: 0 8px 28px rgba(0,0,0,0.06);
+  --transition: 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI;margin:0;padding:0}
+body{max-width:480px;margin:0 auto;padding:16px;background:linear-gradient(160deg,#f0fcff,#fff0f6);color:#1a202c;transition:all .3s ease;min-height:100vh}
+body.dark{background:linear-gradient(160deg,#10182a,#1f2b4d);color:#f8fafc}
+
+.main-header{
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  padding:24px 22px;
+  border-radius:var(--radius-lg);
+  color:#fff;
+  box-shadow:0 12px 36px rgba(255,77,138,0.35);
+  margin-bottom:22px;
+  position:relative;
+  overflow:hidden;
+}
+body.dark .main-header{
+  background:linear-gradient(135deg,#ff3366,#ff6633);
+  box-shadow:0 12px 36px rgba(255,51,102,0.4);
+}
+.main-header::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(circle,rgba(255,255,255,0.1),transparent 70%);
+  animation:floatGlow 12s infinite linear
+}
+@keyframes floatGlow{0%{transform:translate(0,0)}50%{transform:translate(30%,30%)}100%{transform:translate(0,0)}}
+.main-header h2{
+  font-size:26px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:800;
+  position:relative;z-index:2
+}
+
+.box{
+  background:#ffffff;
+  border-radius:var(--radius-lg);
+  padding:26px;
+  margin-bottom:24px;
+  box-shadow:var(--shadow);
+  transition:var(--transition);
+  border:1px solid rgba(255,180,200,0.25);
+  position:relative;
+  backdrop-filter:blur(6px)
+}
+body.dark .box{
+  background:#252f52;
+  box-shadow:0 8px 28px rgba(0,0,0,0.3);
+  border:1px solid rgba(255,140,170,0.15);
+}
+.box:hover{transform:translateY(-6px);box-shadow:0 14px 32px rgba(0,0,0,0.09)}
+.box-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:22px;
+  font-weight:800;
+  margin-bottom:20px;
+  color:var(--primary);
+}
+body.dark .box-head{color:#ff88a0}
+.subtip{font-size:14px;color:#78716c;margin:8px 0 16px;line-height:1.5}
+body.dark .subtip{color:#cbd5e1}
+
+.row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:14px 0;
+  padding:16px 14px;
+  border-radius:var(--radius);
+  background:rgba(255,228,236,0.4);
+  transition:0.24s ease;
+}
+body.dark .row{background:rgba(40,55,90,0.6)}
+.row:hover{background:rgba(255,208,220,0.55);transform:translateX(4px)}
+
+input[type="checkbox"]{
+  width:26px;
+  height:26px;
+  accent-color:var(--primary);
+  transform:scale(1.05);
+}
+
+input,textarea,select{
+  width:100%;
+  padding:18px 16px;
+  border:1px solid #ffc8d8;
+  border-radius:var(--radius);
+  margin:12px 0;
+  background:#fffafc;
+  font-size:16px;
+  transition:.24s ease;
+}
+body.dark input,body.dark textarea,body.dark select{
+  background:#2a375e;
+  border-color:#505f8a;
+  color:#f8fafc;
+}
+input:focus,textarea:focus{
+  outline:none;
+  border-color:var(--primary);
+  box-shadow:0 0 0 5px rgba(255,77,138,0.2);
+  transform:translateY(-2px)
+}
+
+.btn-group{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}
+button{
+  flex:1;
+  min-width:90px;
+  padding:18px;
+  border:none;
+  border-radius:var(--radius);
+  font-size:16px;
+  color:#fff;
+  font-weight:700;
+  transition:var(--transition);
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1)
+}
+button:active{transform:scale(0.95)}
+button.primary{background:linear-gradient(135deg,var(--primary),var(--primary2))}
+button.gray{background:linear-gradient(135deg,#8690b4,#a1aed8)}
+button.red{background:linear-gradient(135deg,#f43f5e,#fb7185)}
+button.green{background:linear-gradient(135deg,#06b6d4,#22d3ee)}
+
+button.active{
+  background:linear-gradient(135deg,#ff2266,#ff5522);
+  box-shadow:0 0 0 2px #fff, 0 10px 24px rgba(255,34,102,0.35);
+  transform:scale(1.05);
+}
+body.dark button.active{box-shadow:0 0 0 2px #4a5a88,0 10px 24px rgba(255,34,102,0.45)}
+
+.tag{font-size:12px;padding:6px 10px;border-radius:99px;margin-left:6px;font-weight:700}
+.tag-kcal{background:#ffe8f0;color:#d92050}
+.tag-pro{background:#dcfce7;color:#047857}
+.tag-carb{background:#fff3e0;color:#bc5c02}
+.tag-fat{background:#fef2f7;color:#be185d}
+.tag-ca{background:#f3e8ff;color:#7e22ce}
+
+.progress-wrap{width:100%;height:22px;background:#ffe6ee;border-radius:99px;margin:16px 0;overflow:hidden}
+body.dark .progress-wrap{background:#374572}
+.progress-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--primary),var(--primary2));transition:.4s ease}
+
+/* 独立空间切换动画 */
+.tab{
+  display:none;
+  will-change:transform,opacity;
+}
+.tab.show{
+  display:block;
+  animation:tabIn 0.44s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes tabIn {
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+/* 独立空间方向 */
+#tab-calendar.show{animation:slideLeft 0.44s forwards}
+#tab-stats.show{animation:slideRight 0.44s forwards}
+#tab-stock.show{animation:slideUp 0.44s forwards}
+#tab-record.show{animation:zoomIn 0.44s forwards}
+
+@keyframes slideLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes zoomIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin:18px 0}
+.cal-day{
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:var(--radius);
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.26s ease;
+  background:#fffafc;
+  border:2px solid rgba(255,200,220,0.3);
+}
+body.dark .cal-day{background:#2a375e;border-color:#505f8a}
+.cal-day:hover{transform:scale(1.1);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.cal-day.done{background:linear-gradient(135deg,#06b6d4,#22d3ee);color:#fff;border-color:transparent}
+.cal-day.today{border-color:var(--primary) !important;box-shadow:0 0 0 3px rgba(255,77,138,0.25)}
+.cal-day.type1{background:rgba(59,130,246,0.25)}
+.cal-day.type2{background:rgba(249,115,22,0.25)}
+.cal-day.type3{background:rgba(16,185,129,0.25)}
+.cal-day.type4{background:rgba(124,58,237,0.25)}
+.cal-day.type5{background:rgba(107,114,128,0.25)}
+
+.cost-row{display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #ffdde8;align-items:center}
+body.dark .cost-row{border-color:#374572}
+
+.star{font-size:30px;cursor:pointer;color:#ffd2e0;transition:.24s ease}
+body.dark .star{color:#4a5a88}
+.star.fill{color:#ffb703;text-shadow:0 0 12px rgba(255,183,3,0.7)}
+
+.history-block{
+  border:1px solid #ffc8d8;
+  padding:22px;
+  border-radius:24px;
+  margin:18px 0;
+  background:rgba(255,248,250,0.85);
+  transition:0.24s ease
+}
+body.dark .history-block{background:rgba(40,55,90,0.65);border-color:#505f8a}
+.history-block:hover{transform:translateX(4px)}
+
+.icon-sm{margin-right:8px;width:22px;text-align:center;display:inline-block}
+.divider{height:3px;background:linear-gradient(90deg,transparent,#ff88aa,transparent);margin:24px 0;border-radius:99px}
+body.dark .divider{background:linear-gradient(90deg,transparent,#505f8a,transparent)}
+
+/* 体重简易图表 */
+.chart{height:120px;margin-top:12px;display:flex;align-items:flex-end;gap:6px;padding:10px 0}
+.chart .bar{flex:1;background:#ff88aa;border-radius:4px;transition:0.3s}
+body.dark .chart .bar{background:#5c6bc0}
+</style>
+</head>
+<body>
+
+<div class="main-header">
+  <h2><i class="fa-solid fa-dumbbell icon-sm"></i>碳循环健身全管理</h2>
+  <div class="row" style="background:transparent;padding:0;margin:10px 0 0">
+    <span style="font-size:16px"><i class="fa-solid fa-moon icon-sm"></i>深色模式</span>
+    <input type="checkbox" id="darkToggle" style="width:auto" onchange="toggleDark()">
+  </div>
+</div>
+
+<div class="btn-group">
+  <button onclick="switchTab('main')" class="primary active" id="nav-main"><i class="fa-solid fa-clipboard-check icon-sm"></i>打卡</button>
+  <button onclick="switchTab('calendar')" id="nav-calendar"><i class="fa-solid fa-calendar-days icon-sm"></i>月日历</button>
+  <button onclick="switchTab('stats')" id="nav-stats"><i class="fa-solid fa-table-columns icon-sm"></i>数据统计</button>
+  <button onclick="switchTab('stock')" id="nav-stock"><i class="fa-solid fa-cart-shopping icon-sm"></i>采购成本</button>
+  <button onclick="switchTab('record')" id="nav-record"><i class="fa-solid fa-file-export icon-sm"></i>记录</button>
+</div>
+
+<!-- 主打卡 -->
+<div id="tab-main" class="tab show">
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-repeat icon-sm"></i>训练周期</div>
+    <div class="btn-group">
+      <button onclick="setCycle(1)" id="c1">D1胸·中碳</button>
+      <button onclick="setCycle(2)" id="c2">D2肩·低碳</button>
+      <button onclick="setCycle(3)" id="c3">D3背·高碳</button>
+      <button onclick="setCycle(4)" id="c4">D4腿·超高碳</button>
+      <button onclick="setCycle(5)" id="c5">D5休息</button>
+    </div>
+    <div class="subtip" id="cycleMeta"></div>
+    <div class="progress-wrap"><div class="progress-bar" id="totalProg"></div></div>
+    <div class="subtip"><i class="fa-solid fa-bullseye icon-sm"></i>完成度：<span id="progText">0%</span></div>
+  </div>
+
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-list-check icon-sm"></i>每日必做</div>
+    <div class="row"><input type="checkbox" id="base1" onchange="calcAll()"><label><i class="fa-solid fa-mug-saucer icon-sm"></i>08:00 温水300ml</label></div>
+    <div class="row"><input type="checkbox" id="base2" onchange="calcAll()"><label><i class="fa-solid fa-pills icon-sm"></i>早餐多维1粒 <span class="tag tag-ca">补钙</span></label></div>
+    <div class="row"><input type="checkbox" id="base3" onchange="calcAll()"><label><i class="fa-solid fa-glass-water icon-sm"></i>饮水2.5–3L</label></div>
+    <div class="row"><input type="checkbox" id="base4" onchange="calcAll()"><label><i class="fa-solid fa-dna icon-sm"></i>蛋白质130g</label></div>
+    <div class="row"><input type="checkbox" id="base5" onchange="calcAll()"><label><i class="fa-solid fa-flask icon-sm"></i>肌酸5g</label></div>
+  </div>
+
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-person-running icon-sm"></i>训练安排</div>
+    <div id="trainText" style="font-size:16px;line-height:1.5;margin-bottom:12px"></div>
+    <div id="moveList" class="subtip" style="color:var(--primary)"></div>
+    <div class="row"><input type="checkbox" id="trainCheck" onchange="calcAll()"><label><i class="fa-solid fa-square-check icon-sm"></i>训练完成</label></div>
+    <div class="divider"></div>
+    <div class="subtip">四维状态评分</div>
+    <div style="margin:14px 0;display:flex;align-items:center;gap:8px">力量：<span class="star" data-key="pow">★</span></div>
+    <div style="margin:14px 0;display:flex;align-items:center;gap:8px">睡眠：<span class="star" data-key="sleepScore">★</span></div>
+    <div style="margin:14px 0;display:flex;align-items:center;gap:8px">疲劳：<span class="star" data-key="tired">★</span></div>
+    <div style="margin:14px 0;display:flex;align-items:center;gap:8px">抽筋：<span class="star" data-key="calciumPain">★</span></div>
+  </div>
+
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-bowl-food icon-sm"></i>饮食打卡</div>
+    <div id="foodList"></div>
+    <div class="subtip" style="margin-top:16px"><i class="fa-solid fa-yen-sign icon-sm"></i>今日花费：¥<span id="foodCost">0.00</span></div>
+  </div>
+
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-scale-balanced icon-sm"></i>身体数据</div>
+    <input placeholder="晨起体重(kg)" id="weight">
+    <input placeholder="睡眠时长(h)" id="sleepHour">
+    <textarea rows="3" placeholder="身体感受" id="note"></textarea>
+    <div class="btn-group">
+      <button onclick="saveTodayLog()" class="green"><i class="fa-solid fa-floppy-disk icon-sm"></i>保存记录</button>
+      <button onclick="clearTodayCheck()" class="gray"><i class="fa-solid fa-eraser icon-sm"></i>清空勾选</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-calculator icon-sm"></i>宏量汇总（剩余可吃）</div>
+    <div style="margin:8px 0"><i class="fa-solid fa-fire icon-sm"></i>热量：<span id="tKcal">0</span> kcal <span style="color:#ff4d8a">剩余 <span id="rKcal">0</span></span></div>
+    <div style="margin:8px 0"><i class="fa-solid fa-dna icon-sm"></i>蛋白质：<span id="tPro">0</span>/130g <span style="color:#047857">剩余 <span id="rPro">0</span></span></div>
+    <div style="margin:8px 0"><i class="fa-solid fa-wheat-awn icon-sm"></i>碳水：<span id="tCarb">0</span>/<span id="tCarbTar">0</span>g <span style="color:#bc5c02">剩余 <span id="rCarb">0</span></span></div>
+    <div style="margin:8px 0"><i class="fa-solid fa-droplet icon-sm"></i>脂肪：<span id="tFat">0</span>/<span id="tFatTar">0</span>g <span style="color:#be185d">剩余 <span id="rFat">0</span></span></div>
+    <div style="margin:8px 0"><i class="fa-solid fa-mountain icon-sm"></i>钙：<span id="tCa">0</span> mg</div>
+  </div>
+</div>
+
+<!-- 月日历 -->
+<div id="tab-calendar" class="tab">
+  <div class="box">
+    <div class="btn-group">
+      <button onclick="prevMonth()" class="gray"><i class="fa-solid fa-chevron-left icon-sm"></i>上月</button>
+      <div class="box-head" id="calTitle" style="flex:2;justify-content:center;margin:0"></div>
+      <button onclick="nextMonth()" class="gray">下月<i class="fa-solid fa-chevron-right icon-sm"></i></button>
+    </div>
+    <div class="calendar-grid">
+      <div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div>
+    </div>
+    <div class="calendar-grid" id="calDaysWrap"></div>
+    <div class="subtip">
+      <span style="color:#06b6d4">●已打卡</span>
+      <span style="color:#ff4d8a;margin-left:12px">粉框=今日</span>
+    </div>
+  </div>
+</div>
+
+<!-- 数据统计 -->
+<div id="tab-stats" class="tab">
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-table-columns icon-sm"></i>本周统计</div>
+    <div style="margin:10px 0">平均体重：<span id="avgW">--</span> kg</div>
+    <div style="margin:10px 0">平均睡眠：<span id="avgS">--</span> h</div>
+    <div style="margin:10px 0">平均力量：<span id="avgPow">--</span>/5</div>
+    <div style="margin:10px 0">饮食花费：¥<span id="weekCost">0.00</span></div>
+    <div style="margin:10px 0">训练天数：<span id="trainDays">0</span></div>
+    <div class="box-head" style="margin-top:20px"><i class="fa-solid fa-chart-simple icon-sm"></i>体重趋势</div>
+    <div class="chart" id="weightChart"></div>
+  </div>
+</div>
+
+<!-- 采购成本 -->
+<div id="tab-stock" class="tab">
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-basket-shopping icon-sm"></i>7天食材备货</div>
+    <div id="stockList"></div>
+    <div class="cost-row" style="font-size:18px;font-weight:700;color:#d92050">周合计：¥<span id="stockTotal">0.00</span></div>
+  </div>
+
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-prescription-bottle icon-sm"></i>补剂月成本</div>
+    <div id="suppList"></div>
+    <div class="cost-row" style="font-weight:700;color:#7e22ce">月均：¥<span id="suppTotal">0.00</span></div>
+  </div>
+
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-gears icon-sm"></i>器材月分摊</div>
+    <div class="row" style="flex-wrap:wrap;gap:10px;padding:0;background:transparent">
+      <input id="eqName" placeholder="器材名称" style="flex:3;margin:0">
+      <input id="eqPrice" placeholder="总价¥" style="flex:2;margin:0">
+      <input id="eqMonth" placeholder="使用月" style="flex:2;margin:0">
+    </div>
+    <button onclick="addEquip()" class="primary" style="margin-top:16px"><i class="fa-solid fa-plus icon-sm"></i>添加</button>
+    <div id="equipWrap" style="margin-top:12px"></div>
+    <div class="cost-row">器材月分摊：¥<span id="equipMonthTotal">0.00</span></div>
+    <div class="cost-row" style="font-size:18px;font-weight:bold;color:#ff4d8a">全月总花费：¥<span id="allMonthCost">0.00</span></div>
+  </div>
+
+  <div class="btn-group">
+    <button onclick="saveStockData()" class="green"><i class="fa-solid fa-save icon-sm"></i>保存</button>
+    <button onclick="resetStock()" class="red"><i class="fa-solid fa-trash icon-sm"></i>重置</button>
+  </div>
+</div>
+
+<!-- 历史记录 -->
+<div id="tab-record" class="tab">
+  <div class="box">
+    <div class="box-head"><i class="fa-solid fa-clock-rotate-left icon-sm"></i>最近记录</div>
+    <div id="historyWrap"></div>
+    <div class="btn-group">
+      <button onclick="exportLog()" class="primary"><i class="fa-solid fa-download icon-sm"></i>导出备份</button>
+      <button onclick="wipeAllData()" class="red"><i class="fa-solid fa-dumpster icon-sm"></i>清空数据</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 命名空间隔离（避免localStorage冲突）
+const CarbonCycleFitness = {
+  // 周期配置 + 训练动作库
+  cycleConfig: {
+    1:{name:"D1胸训·中碳",kcal:2000,proTar:130,carbTar:220,fatTar:65,trainTime:"胸部力量训练",
+      moves:"平板卧推4×8 | 上斜哑铃4×10 | 绳索夹胸3×12 | 双杠臂屈伸3×力竭",
+      food:[
+      {txt:"早餐：燕麦50g、2全蛋、无糖酸奶250g、半苹果",p:32,c:48,f:12,ca:320,cost:7.2},
+      {txt:"练后：肌酸5g",p:0,c:0,f:0,ca:10,cost:1.5},
+      {txt:"加餐：乳清1勺、核桃2颗",p:25,c:6,f:14,ca:80,cost:9.3},
+      {txt:"午餐：糙米120g、鸡胸160g、油麦菜300g",p:40,c:62,f:8,ca:120,cost:14.6},
+      {txt:"小餐：红薯120g",p:4,c:32,f:0.5,ca:30,cost:2.1},
+      {txt:"晚餐：藜麦60g、虾仁130g、海带芝麻酱",p:29,c:30,f:18,ca:220,cost:16.8}
+    ]},
+    2:{name:"D2肩训·低碳",kcal:1780,proTar:130,carbTar:100,fatTar:85,trainTime:"肩部力量训练",
+      moves:"站姿推举4×8 | 侧平举4×12 | 前平举3×12 | 俯身后束3×15",
+      food:[
+      {txt:"早餐：无糖酸奶300g、2蛋、牛油果1/4",p:34,c:22,f:22,ca:380,cost:10.5},
+      {txt:"练后：肌酸5g",p:0,c:0,f:0,ca:10,cost:1.5},
+      {txt:"加餐：乳清1勺、巴旦木8颗",p:25,c:5,f:16,ca:80,cost:10.1},
+      {txt:"午餐：糙米50g、瘦牛170g、大白菜300g",p:43,c:26,f:14,ca:90,cost:15.2},
+      {txt:"下午：黄瓜番茄",p:2,c:8,f:0.5,ca:40,cost:1.8},
+      {txt:"晚餐：鲈鱼150g、嫩豆腐250g、西兰花",p:26,c:17,f:32,ca:350,cost:17.5}
+    ]},
+    3:{name:"D3背训·高碳",kcal:2250,proTar:130,carbTar:310,fatTar:55,trainTime:"背部力量训练",
+      moves:"引体向上4×力竭 | 高位下拉4×10 | 坐姿划船4×10 | 直臂下压3×12",
+      food:[
+      {txt:"早餐：燕麦65g、2全2蛋清、低脂奶、香蕉",p:42,c:78,f:14,ca:340,cost:8.8},
+      {txt:"练后：肌酸+半勺乳清",p:12,c:2,f:0,ca:15,cost:2.8},
+      {txt:"加餐：全麦吐司2片、半勺粉",p:15,c:42,f:10,ca:90,cost:8.6},
+      {txt:"午餐：糙米180g、瘦牛150g、西兰花",p:38,c:92,f:12,ca:130,cost:16.2},
+      {txt:"小餐：红薯220g",p:7,c:58,f:1,ca:50,cost:3.5},
+      {txt:"晚餐：白米100g、鸡胸120g",p:28,c:66,f:6,ca:60,cost:9.8},
+      {txt:"轻食：豆腐200g、菠菜、半玉米、酸奶",p:28,c:32,f:12,ca:360,cost:11.2}
+    ]},
+    4:{name:"D4腿训·超高碳",kcal:2350,proTar:130,carbTar:340,fatTar:55,trainTime:"腿部高强度",
+      moves:"杠铃深蹲4×6 | 腿举4×10 | 弓步蹲3×10 | 腿弯举3×12 | 提踵4×15",
+      food:[
+      {txt:"早餐：燕麦75g、2全2蛋清、低脂奶、香蕉",p:44,c:88,f:14,ca:360,cost:9.5},
+      {txt:"练后：肌酸+半勺乳清",p:12,c:2,f:0,ca:15,cost:2.8},
+      {txt:"加餐：全麦吐司2片、半勺粉",p:15,c:42,f:10,ca:90,cost:8.6},
+      {txt:"午餐：糙米200g、瘦牛160g、西兰花",p:42,c:102,f:12,ca:130,cost:17.1},
+      {txt:"小餐：红薯240g",p:8,c:64,f:1,ca:55,cost:3.8},
+      {txt:"晚餐：白米110g、鸡胸120g",p:29,c:72,f:6,ca:65,cost:10.2},
+      {txt:"轻食：豆腐200g、菠菜、半玉米、酸奶",p:28,c:32,f:12,ca:360,cost:11.2}
+    ]},
+    5:{name:"D5休息日·低碳",kcal:1780,proTar:130,carbTar:100,fatTar:85,trainTime:"休息日无力量",
+      moves:"休息日：散步6000步 + 拉伸10分钟",
+      food:[
+      {txt:"早餐：无糖酸奶300g、2蛋、牛油果1/4",p:34,c:22,f:22,ca:380,cost:10.5},
+      {txt:"加餐：乳清1勺、巴旦木8颗",p:25,c:5,f:16,ca:80,cost:10.1},
+      {txt:"午餐：糙米50g、瘦牛170g、大白菜",p:43,c:26,f:14,ca:90,cost:15.2},
+      {txt:"晚餐：鱼虾150g、嫩豆腐250g、西兰花",p:28,c:18,f:33,ca:360,cost:18.2}
+    ]}
+  },
+
+  stockTemplate: [
+    {name:"无蔗糖燕麦",weight:"1500g",price:0,checked:false},
+    {name:"糙米",weight:"2000g",price:0,checked:false},
+    {name:"大米",weight:"1000g",price:0,checked:false},
+    {name:"藜麦",weight:"500g",price:0,checked:false},
+    {name:"红薯",weight:"2500g",price:0,checked:false},
+    {name:"甜玉米",weight:"10根",price:0,checked:false},
+    {name:"全麦吐司",weight:"2大包",price:0,checked:false},
+    {name:"鸡胸肉",weight:"2000g",price:0,checked:false},
+    {name:"瘦牛里脊",weight:"1500g",price:0,checked:false},
+    {name:"鲈鱼/巴沙鱼",weight:"1000g",price:0,checked:false},
+    {name:"冻虾仁",weight:"800g",price:0,checked:false},
+    {name:"鸡蛋",weight:"60枚",price:0,checked:false},
+    {name:"豆腐",weight:"10块",price:0,checked:false},
+    {name:"低脂牛奶",weight:"2箱",price:0,checked:false},
+    {name:"无糖酸奶",weight:"2桶",price:0,checked:false},
+    {name:"绿叶菜、西兰花、番茄黄瓜",weight:"一批",price:0,checked:false},
+    {name:"坚果、牛油果、橄榄油",weight:"一批",price:0,checked:false},
+    {name:"香蕉、苹果",weight:"一批",price:0,checked:false}
+  ],
+  
+  suppTemplate: [
+    {name:"乳清蛋白粉",totalPrice:0,useMonth:2,stockLeft:"满"},
+    {name:"肌酸",totalPrice:0,useMonth:3,stockLeft:"满"},
+    {name:"男士多维",totalPrice:0,useMonth:1.5,stockLeft:"满"}
+  ],
+
+  // 全局状态
+  state: {
+    nowCycle: 1,
+    darkMode: false,
+    starScores: {pow:3,sleepScore:3,tired:3,calciumPain:3},
+    stockData: [],
+    suppData: [],
+    equipList: [],
+    logList: [],
+    calendarMap: {},
+    nowDate: new Date()
+  },
+
+  // 工具函数
+  safeParse(str, fallback) {
+    try {
+      if (!str) return fallback;
+      return JSON.parse(str);
+    } catch (e) {
+      return fallback;
+    }
+  },
+
+  cleanNum(val) {
+    const n = parseFloat(val);
+    return isNaN(n) || n < 0 ? 0 : n;
+  },
+
+  // 页面切换
+  switchTab(id) {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("show"));
+    document.getElementById("tab-" + id).classList.add("show");
+    
+    document.querySelectorAll(".btn-group button").forEach(b => b.classList.remove("active"));
+    document.getElementById("nav-" + id).classList.add("active");
+    
+    if (id === "calendar") this.renderCalendar();
+    if (id === "stats") this.calcStats();
+    if (id === "stock") this.renderStock();
+    if (id === "record") this.renderHistory();
+  },
+
+  // 深色模式
+  toggleDark() {
+    this.state.darkMode = document.getElementById("darkToggle").checked;
+    document.body.classList.toggle("dark", this.state.darkMode);
+    localStorage.setItem("ccf_darkMode", String(this.state.darkMode)); // 前缀隔离
+  },
+
+  // 周期切换
+  setCycle(num) {
+    this.state.nowCycle = num;
+    document.querySelectorAll("[id^='c']").forEach(b => b.classList.remove("active"));
+    document.getElementById("c" + num).classList.add("active");
+    this.renderCycleContent();
+    this.calcAll();
+  },
+
+  // 渲染周期内容
+  renderCycleContent() {
+    const cfg = this.cycleConfig[this.state.nowCycle];
+    document.getElementById("cycleMeta").innerText = `${cfg.name} | 热量${cfg.kcal}kcal`;
+    document.getElementById("trainText").innerText = cfg.trainTime;
+    document.getElementById("moveList").innerText = cfg.moves;
+    
+    let foodHtml = "";
+    cfg.food.forEach((item, i) => {
+      const k = Math.round(item.p * 4 + item.c * 4 + item.f * 9);
+      foodHtml += `
+      <div class="row">
+        <input type="checkbox" id="food${i}" onchange="CarbonCycleFitness.calcAll()">
+        <label>${item.txt}</label>
+        <span class="tag tag-kcal">${k}kcal</span>
+        <span class="tag tag-pro">P${item.p}</span>
+        <span class="tag tag-carb">C${item.c}</span>
+        <span class="tag tag-fat">F${item.f}</span>
+      </div>`;
+    });
+    document.getElementById("foodList").innerHTML = foodHtml;
+    document.getElementById("tKcal").innerText = cfg.kcal;
+    document.getElementById("tCarbTar").innerText = cfg.carbTar;
+    document.getElementById("tFatTar").innerText = cfg.fatTar;
+  },
+
+  // 计算汇总
+  calcAll() {
+    const cfg = this.cycleConfig[this.state.nowCycle];
+    let tp = 0, tc = 0, tf = 0, tca = 0, cost = 0;
+    cfg.food.forEach((it, i) => {
+      const el = document.getElementById("food" + i);
+      if (el?.checked) { tp += it.p; tc += it.c; tf += it.f; tca += it.ca; cost += it.cost }
+    });
+    
+    document.getElementById("tPro").innerText = tp;
+    document.getElementById("tCarb").innerText = tc;
+    document.getElementById("tFat").innerText = tf;
+    document.getElementById("tCa").innerText = tca;
+    document.getElementById("foodCost").innerText = cost.toFixed(2);
+    
+    // 剩余
+    document.getElementById("rKcal").innerText = Math.max(0, cfg.kcal - Math.round(tp*4+tc*4+tf*9));
+    document.getElementById("rPro").innerText = Math.max(0, 130 - tp);
+    document.getElementById("rCarb").innerText = Math.max(0, cfg.carbTar - tc);
+    document.getElementById("rFat").innerText = Math.max(0, cfg.fatTar - tf);
+    
+    // 完成度
+    const base = ["base1","base2","base3","base4","base5","trainCheck"];
+    let baseOk = base.filter(id => document.getElementById(id)?.checked).length;
+    let foodOk = cfg.food.filter((_, i) => document.getElementById("food" + i)?.checked).length;
+    const total = base.length + cfg.food.length;
+    const rate = Math.round((baseOk + foodOk) / total * 100);
+    document.getElementById("totalProg").style.width = rate + "%";
+    document.getElementById("progText").innerText = rate + "%";
+  },
+
+  // 渲染星级
+  renderStars(el, num) {
+    let h = "";
+    for (let i = 0; i < 5; i++) h += `<span class="star ${i < num ? 'fill' : ''}">★</span>`;
+    el.innerHTML = h;
+  },
+
+  // 保存今日记录
+  saveTodayLog() {
+    const today = new Date();
+    const dateStr = today.toLocaleDateString();
+    const cfg = this.cycleConfig[this.state.nowCycle];
+    const foodCheck = cfg.food.map((_, i) => document.getElementById("food" + i)?.checked || false);
+    
+    const log = {
+      date: dateStr,
+      cycle: this.state.nowCycle,
+      weight: document.getElementById("weight").value.trim(),
+      sleep: document.getElementById("sleepHour").value.trim(),
+      note: document.getElementById("note").value.trim(),
+      stars: { ...this.state.starScores },
+      base: ["base1","base2","base3","base4","base5","trainCheck"].map(id => document.getElementById(id)?.checked || false),
+      food: foodCheck,
+      ts: today.getTime()
+    };
+    
+    const exist = this.state.logList.findIndex(x => x.date === dateStr);
+    if (exist > -1) this.state.logList.splice(exist, 1);
+    this.state.logList.push(log);
+    this.state.calendarMap[dateStr] = this.state.nowCycle;
+    
+    localStorage.setItem("ccf_fitLogList", JSON.stringify(this.state.logList)); // 前缀隔离
+    localStorage.setItem("ccf_calMap", JSON.stringify(this.state.calendarMap));
+    alert("✅保存成功！已同步日历");
+    
+    // 自动切换下一天
+    this.setCycle(this.state.nowCycle === 5 ? 1 : this.state.nowCycle + 1);
+  },
+
+  // 清空勾选
+  clearTodayCheck() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+    document.getElementById("weight").value = "";
+    document.getElementById("sleepHour").value = "";
+    document.getElementById("note").value = "";
+    this.calcAll();
+  },
+
+  // 日历渲染
+  renderCalendar() {
+    const y = this.state.nowDate.getFullYear();
+    const m = this.state.nowDate.getMonth();
+    document.getElementById("calTitle").innerText = `${y}年${m + 1}月`;
+    
+    const first = new Date(y, m, 1).getDay() || 7;
+    const last = new Date(y, m + 1, 0).getDate();
+    const todayStr = new Date().toLocaleDateString();
+    
+    let html = "";
+    for (let i = 1; i < first; i++) html += `<div class="cal-day"></div>`;
+    for (let d = 1; d <= last; d++) {
+      const ds = new Date(y, m, d).toLocaleDateString();
+      let cls = "cal-day";
+      if (ds === todayStr) cls += " today";
+      const t = this.state.calendarMap[ds];
+      if (t) { cls += " done type" + t; }
+      html += `<div class="${cls}" onclick="CarbonCycleFitness.clickDay('${ds}')">${d}</div>`;
+    }
+    document.getElementById("calDaysWrap").innerHTML = html;
+  },
+
+  prevMonth() {
+    this.state.nowDate.setMonth(this.state.nowDate.getMonth() - 1);
+    this.renderCalendar();
+  },
+
+  nextMonth() {
+    this.state.nowDate.setMonth(this.state.nowDate.getMonth() + 1);
+    this.renderCalendar();
+  },
+
+  clickDay(ds) {
+    const f = this.state.logList.find(x => x.date === ds);
+    if (!f) return alert("📅暂无记录");
+    alert(`${f.date}\n${this.cycleConfig[f.cycle].name}\n体重：${f.weight||'-'}kg\n睡眠：${f.sleep||'-'}h\n力量：${f.stars.pow}星`);
+  },
+
+  // 备货渲染
+  renderStock() {
+    let sh = "", tt = 0;
+    this.state.stockData.forEach((it, i) => {
+      const p = this.cleanNum(it.price); tt += p;
+      sh += `<div class="cost-row">
+        <div style="flex:2;display:flex;align-items:center;gap:8px">
+          <input type="checkbox" ${it.checked?"checked":""} onchange="CarbonCycleFitness.state.stockData[${i}].checked=this.checked">
+          ${it.name} (${it.weight})
+        </div>
+        <input style="width:90px" value="${p}" onchange="CarbonCycleFitness.state.stockData[${i}].price=CarbonCycleFitness.cleanNum(this.value)">
+        <span>¥${p.toFixed(2)}</span>
+      </div>`;
+    });
+    document.getElementById("stockList").innerHTML = sh;
+    document.getElementById("stockTotal").innerText = tt.toFixed(2);
+    
+    let suh = "", sumSup = 0;
+    this.state.suppData.forEach((it, i) => {
+      const tp = this.cleanNum(it.totalPrice);
+      const um = this.cleanNum(it.useMonth) || 1;
+      const mc = (tp / um).toFixed(2);
+      sumSup += tp / um;
+      suh += `<div class="cost-row">
+        <div style="flex:2">${it.name} · 库存：${it.stockLeft}</div>
+        <input style="width:86px" value="${tp}" onchange="CarbonCycleFitness.state.suppData[${i}].totalPrice=CarbonCycleFitness.cleanNum(this.value)">
+        <input style="width:76px" value="${um}" onchange="CarbonCycleFitness.state.suppData[${i}].useMonth=CarbonCycleFitness.cleanNum(this.value)">
+        <span>月¥${mc}</span>
+      </div>`;
+    });
+    document.getElementById("suppList").innerHTML = suh;
+    document.getElementById("suppTotal").innerText = sumSup.toFixed(2);
+    
+    let eh = "", sumEq = 0;
+    this.state.equipList.forEach(it => {
+      const m = (this.cleanNum(it.price) / this.cleanNum(it.month)).toFixed(2);
+      sumEq += this.cleanNum(it.price) / this.cleanNum(it.month);
+      eh += `<div class="cost-row">${it.name} → 月¥${m}</div>`;
+    });
+    document.getElementById("equipWrap").innerHTML = eh;
+    document.getElementById("equipMonthTotal").innerText = sumEq.toFixed(2);
+    
+    const monthFood = tt / 7 * 30;
+    document.getElementById("allMonthCost").innerText = (monthFood + sumSup + sumEq).toFixed(2);
+  },
+
+  // 添加器材
+  addEquip() {
+    const n = document.getElementById("eqName").value.trim();
+    const p = this.cleanNum(document.getElementById("eqPrice").value);
+    const m = this.cleanNum(document.getElementById("eqMonth").value);
+    if (!n || p <= 0 || m <= 0) return alert("请完整填写");
+    this.state.equipList.push({ name: n, price: p, month: m });
+    localStorage.setItem("ccf_equipList", JSON.stringify(this.state.equipList));
+    this.renderStock();
+    document.getElementById("eqName").value = "";
+    document.getElementById("eqPrice").value = "";
+    document.getElementById("eqMonth").value = "";
+  },
+
+  // 保存备货数据
+  saveStockData() {
+    localStorage.setItem("ccf_stockData", JSON.stringify(this.state.stockData));
+    localStorage.setItem("ccf_suppData", JSON.stringify(this.state.suppData));
+    alert("✅保存成功");
+  },
+
+  // 重置备货数据
+  resetStock() {
+    if (!confirm("确定重置？")) return;
+    this.state.stockData = JSON.parse(JSON.stringify(this.stockTemplate));
+    this.state.suppData = JSON.parse(JSON.stringify(this.suppTemplate));
+    this.state.equipList = [];
+    this.saveStockData();
+    this.renderStock();
+  },
+
+  // 统计计算
+  calcStats() {
+    const now = new Date();
+    const weekStart = new Date(now - ((now.getDay() || 7) - 1) * 86400000);
+    const list = this.state.logList.filter(x => new Date(x.ts) >= weekStart);
+    
+    let sw = 0, ss = 0, sp = 0, st = 0, sc = 0, cn = 0;
+    list.forEach(it => {
+      const w = this.cleanNum(it.weight);
+      const s = this.cleanNum(it.sleep);
+      if (w > 0) { sw += w; cn++ }
+      if (s > 0) ss += s;
+      sp += Number(it.stars.pow) || 3;
+      if (it.cycle !== 5) st++;
+      const cfg = this.cycleConfig[it.cycle];
+      let c = 0;
+      cfg.food.forEach((f, i) => { if (it.food[i]) c += f.cost });
+      sc += c;
+    });
+    
+    document.getElementById("avgW").innerText = cn ? (sw / cn).toFixed(1) : "--";
+    document.getElementById("avgS").innerText = list.length ? (ss / list.length).toFixed(1) : "--";
+    document.getElementById("avgPow").innerText = list.length ? (sp / list.length).toFixed(1) : "--";
+    document.getElementById("weekCost").innerText = sc.toFixed(2);
+    document.getElementById("trainDays").innerText = st;
+    
+    // 体重图表
+    const chart = list.slice(-10).map(it => ({ w: this.cleanNum(it.weight) }));
+    let max = Math.max(...chart.map(x => x.w) || [1]);
+    let htm = "";
+    chart.forEach(x => {
+      const h = x.w ? Math.round(x.w / max * 100) : 10;
+      htm += `<div class="bar" style="height:${h}%"></div>`;
+    });
+    document.getElementById("weightChart").innerHTML = htm || "<div style='color:#999'>暂无体重数据</div>";
+  },
+
+  // 渲染历史记录
+  renderHistory() {
+    const list = this.state.logList.slice(-20).reverse();
+    if (list.length === 0) return document.getElementById("historyWrap").innerHTML = "<div style='text-align:center;padding:20px'>暂无记录</div>";
+    let h = "";
+    list.forEach(it => {
+      h += `<div class="history-block">
+        <div style="font-weight:700">${it.date} · D${it.cycle} ${this.cycleConfig[it.cycle].name}</div>
+        <div style="margin:6px 0">体重：${it.weight||'-'}kg  睡眠：${it.sleep||'-'}h</div>
+        <div>力量${it.stars.pow}★ 睡眠${it.stars.sleepScore}★ 疲劳${it.stars.tired}★ 抽筋${it.stars.calciumPain}★</div>
+        <div style="margin-top:8px">备注：${it.note||'无'}</div>
+      </div>`;
+    });
+    document.getElementById("historyWrap").innerHTML = h;
+  },
+
+  // 导出记录
+  exportLog() {
+    let t = "===== 碳循环健身打卡记录 =====\n";
+    this.state.logList.forEach(it => {
+      t += `${it.date} D${it.cycle} | 体重${it.weight}kg | 睡眠${it.sleep}h\n备注：${it.note}\n——————————\n`;
+    });
+    const blob = new Blob([t], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "碳循环健身记录.txt";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  },
+
+  // 清空所有数据
+  wipeAllData() {
+    if (!confirm("⚠️清空所有数据，不可恢复！")) return;
+    localStorage.clear();
+    location.reload();
+  },
+
+  // 初始化
+  init() {
+    // 加载本地存储（添加前缀避免冲突）
+    this.state.darkMode = localStorage.getItem("ccf_darkMode") === "true";
+    this.state.starScores = this.safeParse(localStorage.getItem("ccf_starScores"), this.state.starScores);
+    this.state.stockData = this.safeParse(localStorage.getItem("ccf_stockData"), JSON.parse(JSON.stringify(this.stockTemplate)));
+    this.state.suppData = this.safeParse(localStorage.getItem("ccf_suppData"), JSON.parse(JSON.stringify(this.suppTemplate)));
+    this.state.equipList = this.safeParse(localStorage.getItem("ccf_equipList"), []);
+    this.state.logList = this.safeParse(localStorage.getItem("ccf_fitLogList"), []);
+    this.state.calendarMap = this.safeParse(localStorage.getItem("ccf_calMap"), {});
+
+    // 深色模式初始化
+    if (this.state.darkMode) {
+      document.getElementById("darkToggle").checked = true;
+      document.body.classList.add("dark");
+    }
+
+    // 星级初始化
+    document.querySelectorAll(".star").forEach(el => {
+      const key = el.dataset.key;
+      this.renderStars(el, this.state.starScores[key]);
+      el.onclick = e => {
+        const stars = Array.from(el.querySelectorAll(".star"));
+        const idx = stars.indexOf(e.target);
+        if (idx < 0) return;
+        this.state.starScores[key] = idx + 1;
+        this.renderStars(el, this.state.starScores[key]);
+        localStorage.setItem("ccf_starScores", JSON.stringify(this.state.starScores));
+      }
+    });
+
+    // 初始化页面
+    this.setCycle(1);
+    this.renderCalendar();
+    this.renderStock();
+    this.renderHistory();
+    this.calcStats();
+  }
+};
+
+// 页面加载完成后初始化
+window.onload = () => {
+  CarbonCycleFitness.init();
+};
+
+// 暴露全局方法（供HTML调用）
+window.switchTab = (id) => CarbonCycleFitness.switchTab(id);
+window.toggleDark = () => CarbonCycleFitness.toggleDark();
+window.setCycle = (num) => CarbonCycleFitness.setCycle(num);
+window.calcAll = () => CarbonCycleFitness.calcAll();
+window.saveTodayLog = () => CarbonCycleFitness.saveTodayLog();
+window.clearTodayCheck = () => CarbonCycleFitness.clearTodayCheck();
+window.prevMonth = () => CarbonCycleFitness.prevMonth();
+window.nextMonth = () => CarbonCycleFitness.nextMonth();
+window.clickDay = (ds) => CarbonCycleFitness.clickDay(ds);
+window.addEquip = () => CarbonCycleFitness.addEquip();
+window.saveStockData = () => CarbonCycleFitness.saveStockData();
+window.resetStock = () => CarbonCycleFitness.resetStock();
+window.exportLog = () => CarbonCycleFitness.exportLog();
+window.wipeAllData = () => CarbonCycleFitness.wipeAllData();
+</script>
+</body>
+</html>
